@@ -51,11 +51,13 @@ class Auth extends HttpResponse
 
     public function info($token)
     {
+        // todo
         return $this->sendSuccess(['roles' => ['editor'], 'name' => 'admin', 'avatar' => 'http://thirdwx.qlogo.cn/mmopen/1Jav4ibUmeIaRFCDkxAwO6GhMdYbVoG3GtXqWzGZ8h6ibV83ib8ab2YhtW9GKy0IqJ4rnPyksF8KkENkGEOMPWh3Tz5ibTUEGhFS/132']);
     }
 
     public function logout()
     {
+        // todo
         return $this->sendSuccess();
     }
 }

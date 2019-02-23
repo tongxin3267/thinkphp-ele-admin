@@ -6,6 +6,7 @@ use xiaodi\Auth;
 use app\service\model\AdminUserModel;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\ValidationData;
+use think\facade\Config;
 
 /**
  * 权限中间件
@@ -30,9 +31,11 @@ class CheckAuth
                 return response(['code' => 50008, 'message' => '签名过期或错误'], 200, [], 'json');
             }
 
-            $res = $this->checkAuth($token->getClaim('uid'));
-            if (!$res) {
-                return response(['code' => 50015, 'message' => '没有操作权限！'], 200, [], 'json');
+            if ($token->getClaim('uid') != Config::get('auth.auth_super_id')) {
+                $res = $this->checkAuth($token->getClaim('uid'));
+                if (!$res) {
+                    return response(['code' => 50015, 'message' => '没有操作权限！'], 200, [], 'json');
+                }
             }
 
             $request->uid = $token->getClaim('uid');
