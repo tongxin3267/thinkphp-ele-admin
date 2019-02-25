@@ -20,73 +20,49 @@ class User extends Base
         $this->userModel = new AdminUserModel();
     }
 
-    public function index()
+    public function list()
     {
         $users = $this->userModel->field('admin_password', true)->select();
 
-        $this->assign('users', $users->toArray());
-        return $this->fetch();
+        return $this->sendSuccess($users);
     }
 
     public function add()
     {
-        if ($this->request->method() === 'POST') {
-            try {
-                $res = $this->userModel->add($this->params);
-            } catch (\Exception $e) {
-                return $this->sendError($e->getMessage());
-            }
-
-            return $this->sendSuccess();
-        } else {
-            $groups = $this->groupModel->select();
-            $this->assign('groups', $groups->toArray());
-            return $this->fetch('info');
+        try {
+            $res = $this->userModel->addUser($this->params);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
         }
+
+        return $this->sendSuccess();
     }
 
     /**
      * 编辑用户
      */
-    public function edit($admin_id)
+    public function update($admin_id)
     {
-        if ($this->request->method() === 'POST') {
-            try {
-                $res = $this->userModel->edit($this->params);
-            } catch (\Exception $e) {
-                return $this->sendError($e->getMessage());
-            }
-
-            return $this->sendSuccess();
+        try {
+            $res = $this->userModel->updateUser($admin_id, $this->params);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
         }
 
-        $info = $this->userModel->getInfo($admin_id);
-        unset($info['admin_password']);
-
-        $ids = $this->userModel->getUserGroupIds($info->admin_id);
-        $info->group_id = $ids;
-
-        $groups = $this->groupModel->select();
-
-        $this->assign('groups', $groups->toArray());
-        $this->assign('info', $info->toArray());
-
-        return $this->fetch('info');
+        return $this->sendSuccess();
     }
 
     /**
      * 删除用户
      */
-    public function delete()
+    public function delete($admin_id)
     {
-        if ($this->request->method() === 'POST') {
-            try {
-                $res = $this->userModel->deleteUser($this->params);
-            } catch (\Exception $e) {
-                return $this->sendError($e->getMessage());
-            }
-
-            return $this->sendSuccess();
+        try {
+            $res = $this->userModel->deleteUser($admin_id);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
         }
+
+        return $this->sendSuccess();
     }
 }

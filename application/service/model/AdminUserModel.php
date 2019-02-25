@@ -2,8 +2,8 @@
 namespace app\service\model;
 
 use think\Model;
-use app\admin\validate\UserValidate;
-use app\admin\model\rbac\GroupAccessModel;
+use app\service\validate\AdminUserValidate;
+use app\service\model\rbac\GroupAccessModel;
 use think\Db;
 
 /**
@@ -17,12 +17,6 @@ class AdminUserModel extends Model
 
     protected $autoWriteTimestamp = true;
 
-    public function setAdminStatusAttr($value)
-    {
-        $type = ['true' => 1, 'false' => 0];
-        return $type[$value];
-    }
-
     public function setAdminPasswordAttr($value)
     {
         return password_hash($value, PASSWORD_DEFAULT);
@@ -35,7 +29,7 @@ class AdminUserModel extends Model
      */
     public static function validate($data, $scene)
     {
-        $validate = new UserValidate;
+        $validate = new AdminUserValidate;
 
         if (!$validate->scene($scene)->check($data)) {
             exception($validate->getError());
@@ -65,16 +59,19 @@ class AdminUserModel extends Model
      * 注册用户
      * @param array $params
      */
-    public function add(array $params)
+    public function addUser(array $params)
     {
+
         Db::startTrans();
         try {
+            $groups = \explode(',', $params['groups']);
             $this->save($params);
 
             $access = new GroupAccessModel;
 
             $temp = [];
-            foreach ($params['group_id'] as $v) {
+           
+            foreach ($groups as $v) {
                 $temp[] = ['uid' => $this->admin_id, 'group_id' => $v];
             }
 

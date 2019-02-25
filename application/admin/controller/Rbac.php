@@ -13,6 +13,7 @@ class Rbac extends Base
     public function __construct()
     {
         parent::__construct();
+        
         $this->ruleModel = new RuleModel();
         $this->groupModel = new GroupModel();
     }
@@ -145,4 +146,72 @@ class Rbac extends Base
 
         return $this->sendSuccess();
     }
+
+    /**
+     * 用户列表
+     *
+     * @param integer $id 标识
+     * @return void
+     */
+    public function users()
+    {
+        try {
+            $res = $this->userModel->list($id);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendSuccess($res);
+    }
+
+    /**
+     * 添加用户
+     *
+     * @return void
+     */
+    public function addUser()
+    {
+        try {
+            $res = $this->userModel->addUser($this->params);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendSuccess();
+    }
+
+    /**
+     * 更新用户
+     *
+     * @param integer $id 标识
+     * @return void
+     */
+    public function updateUser(int $id)
+    {
+        try {
+            $res = $this->userModel->updateUser($id, $this->params);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendSuccess();
+    }
+
+    /**
+     * 删除用户
+     *
+     * @param integer $id 标识
+     * @return void
+     */
+    public function deleteUser(int $id)
+    {
+        try {
+            $res = $this->userModel->deleteUser($id);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+
+        return $this->sendSuccess();
+    }
+
 }

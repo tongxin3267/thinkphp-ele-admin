@@ -15,5 +15,10 @@ Route::group('/auth', function () {
     Route::rule('/group', 'admin/rbac/addGroup', 'POST');
     Route::rule('/group/:id', 'admin/rbac/updateGroup', 'PUT');
     Route::rule('/group/:id', 'admin/rbac/deleteGroup', 'DELETE');
+
+    Route::rule('/user', 'admin/user/list', 'GET');
+    Route::rule('/user', 'admin/user/add', 'POST');
+    Route::rule('/user/:id', 'admin/user/update', 'PUT');
+    Route::rule('/user/:id', 'admin/user/delete', 'DELETE');
 })->allowCrossDomain();
 

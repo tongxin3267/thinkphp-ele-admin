@@ -9,21 +9,21 @@ use think\Validate;
 class AdminUserValidate extends Validate
 {
     protected $rule = [
-        'admin_user'      =>  'require|unique:admin',
+        'admin_user'      =>  'require',
         'admin_password'   =>  'require',
-        'group_id'   =>  'require',
+        'groups'   =>  'require',
     ];
 
     protected $message  =   [
         'admin_user.require'    => '账号必须',
         'admin_user.unique' => '账号重复',
         'admin_password.require' => '密码必须',
-        'group_id.require' => '用户组必须',
+        'groups.require' => '用户组必须',
     ];
 
     protected $scene = [
-        'edit'    =>  ['admin_user', 'admin_password', 'group_id', 'admin_id'],
-        'create'  =>  ['admin_user', 'admin_password', 'group_id'],
+        'edit'    =>  ['admin_user', 'admin_password', 'groups', 'admin_id'],
+        'create'  =>  ['admin_user', 'admin_password', 'groups'],
         'delete'  =>  ['admin_id']
     ];
 }
