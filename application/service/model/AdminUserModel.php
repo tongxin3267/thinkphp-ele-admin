@@ -88,18 +88,19 @@ class AdminUserModel extends Model
      * 修改用户
      * @param array $params
      */
-    public function edit(array $params)
+    public function updateUser(int $id, array $params)
     {
         Db::startTrans();
         try {
-            $info = $this->getInfo($params['admin_id']);
+            $info = $this->getInfo($id);
             unset($params['admin_id']);
             $info->save($params);
+            $groups = \explode(',', $params['groups']);
 
             $this->deleteUserGroup($info->admin_id);
             $access = new GroupAccessModel;
             $temp = [];
-            foreach ($params['group_id'] as $v) {
+            foreach ($groups as $v) {
                 $temp[] = ['uid' => $info->admin_id, 'group_id' => $v];
             }
 
@@ -116,11 +117,16 @@ class AdminUserModel extends Model
      * 删除用户
      * @param array $params
      */
-    public function deleteUser($params)
+    public function deleteUser($id)
     {
         Db::startTrans();
         try {
-            $info = $this->getInfo($params['admin_id']);
+
+            if ($id == config('auth.auth_super_id')) {
+                exception('操作出错');
+            }
+
+            $info = $this->getInfo($id);
 
             $access = new GroupAccessModel;
         

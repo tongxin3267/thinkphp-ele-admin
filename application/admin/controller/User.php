@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\service\model\AdminUserModel;
 use app\service\model\rbac\GroupModel;
+use app\service\model\rbac\GroupAccessModel;
 
 /**
  * 后台用户
@@ -18,11 +19,16 @@ class User extends Base
         parent::__construct();
         $this->groupModel = new GroupModel();
         $this->userModel = new AdminUserModel();
+        $this->groupAccessModel = new GroupAccessModel();
     }
 
     public function list()
     {
-        $users = $this->userModel->field('admin_password', true)->select();
+        $subsql = $this->groupAccessModel->group('uid')->field('uid, GROUP_CONCAT(group_id) as groups')->buildSql();
+        $users = $this->userModel->alias('A')
+            ->where('A.admin_id', '<>', config('auth.auth_super_id'))
+            ->rightJoin([$subsql => 'G'], ' G.uid = A.admin_id')
+            ->select();
 
         return $this->sendSuccess($users);
     }
@@ -41,10 +47,10 @@ class User extends Base
     /**
      * 编辑用户
      */
-    public function update($admin_id)
+    public function update($id)
     {
         try {
-            $res = $this->userModel->updateUser($admin_id, $this->params);
+            $res = $this->userModel->updateUser($id, $this->params);
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -55,10 +61,10 @@ class User extends Base
     /**
      * 删除用户
      */
-    public function delete($admin_id)
+    public function delete($id)
     {
         try {
-            $res = $this->userModel->deleteUser($admin_id);
+            $res = $this->userModel->deleteUser($id);
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
